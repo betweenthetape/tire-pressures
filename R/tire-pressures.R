@@ -1,3 +1,3 @@
-#' @importFrom tibble tibble
+#' @import tibble
 #' @import plotly
 NULL
