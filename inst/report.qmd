@@ -13,30 +13,39 @@ execute:
 pkgload::load_all()
 library(dplyr)
 library(ggplot2)
-library(gt)
 library(ggridges)
+library(gt)
+library(gtExtras)
 options(pillar.sigfig = 4)
 ```
 
-If lower tire pressures offer more grip and higher tire pressures roll faster, what pressure should we use? The true answer is it depends. On the track, the weather, the type of riding, the rider, the type of tire, and so on.
+If lower tire pressures offer more grip and higher tire pressures roll faster, which pressure should you use? Like most things in life, the answer is: it depends. On the track, the weather, the type of riding, the rider, the type of tire, and so on.
 
-Rather than try to create a one size fits all answer, we can instead refine our question: are lower tire pressures faster than higher tire pressures on an enduro bike using downhill tires with inserts on a flow trail with tacky soil?
+So rather than trying to find a one size fits all answer, which is impossible, I set out to perform an expriment. The idea is simple: test back to back runs of high vs low tire pressures on the same track, many times. Doing this will help me, and hopefully you, understand how tires perform under *specific* conditions.
 
-Answering this, and many questions like these can hep us build up an arsenal of knowledge we can use to tune our bikes to different scenarios.
+Answering these kind of specific questions can help us build an understanding of how tires perform under different conditions, equipting us with the skills to know what to deply when.
 
 ### Testing setup
 
+#### The experiment
+
+Two sets of tire pressures were chosen for my 88kg weight: 28 (front/rear) PSI for the higher pressures and 18/20 (front/rear) for lower pressures. These pressures maintain a (nearly) consistent 0.9 front to rear ratio, with the high pressures aligning with recommendations such as [those from E13](https://support.ethirteen.com/hc/en-us/articles/360043258892-What-tire-pressure-should-I-run-with-your-2-4-2-5in-MTB-Tires).
+
+After three warm up laps, each set of tire pressures was tested over 15 runs, resulting in 30 total laps. The runs were randomised into batches of 5 consecutive runs for a given tire pressure. Randomising the runs in this way helps us to partially control for the learning effect in which times will naturally get faster as the same track is perfected over and over (more on this later).
+
+To time the runs, an automatic [Freelap timing system](https://www.freelap.com/mtb/) was used, with a claimed accuracy of 0.02s. Conditions on the day were dry, with the soil being mostly tacky wiht a few greasy patches after some left over rain days prior.
+
 #### The bike
 
-My test bike of choice was a Raaw Madonna v2.2. At 188cm in height, I ride a size large. The geometry of this bike feels great, with the high stack and well proportion chainstays creating intuitive handling which make placing weight between the tires feel effortless. A good thing when trying to assess their performance.
+The test bike of choice was a Raaw Madonna v2.2. At 188cm in height, I chose a size large. The geometry of this bike feels great, with the high stack and well proportion chainstays creating intuitive handling that makes placing weight between the front and rear tires feel effortless. A good thing when trying to assess their performance.
 
-Michellin Wild Enduro Racing Line tires were chosen for this test. It is a tire I have a lot of experience on and believe it is well suited for the loose over hardpark type of terrain that is frequently found here in the south of Switzerland. Inside the tires is a set of cushcore pro inserts.
+Michellin Wild Enduro Racing Line tires were chosen for this test. It is a tire I have a lot of experience on and believe it is well suited for the terrain that is frequently found here in the south of Switzerland. Inside the tires was a set of cushcore pro inserts.
 
 #### The track
 
 The upper section of Mondini Downhill, a blue flow trail, was used for testing. It has a steep roll in followed by three flattish corners with just the right gradient that your tires begin to break traction if you don't pedal or touch the breaks.
 
-Keeping the testing to only three corners allows us to reduce the scope other factors such as mistakes and fitness may have on the results. Simply put, the more times we can do a run, the more we can be sure the result is due to what we are testing, and not just to a bad run. The higher number of runs also allows us to perfect our lines and find the limits of traction.
+Keeping the testing to only three corners allows one to reduce the scope that other factors such as mistakes and fitness may have on the results. In other words, the more times we can repeat a run, the more we can be sure the result is due to what we are testing, and not just due to a bad run.
 
 Collectively, this setup allows us to create a consistent testing environment where we try to control the effects of pedalling, breaking, fitness and mistakes and isolate as much as we can the effects the tire pressures are having on performance.
 
@@ -49,26 +58,102 @@ var script = document.createElement("script"); script.setAttribute("src", "https
 </script>
 ```
 
-#### The experiment
-
-Two sets of tire pressures were chosen for my 88kg weight: 28 (front/rear) PSI for the higher pressures and 18/20 (front/rear) for lower pressures. These pressures maintain a (nearly) consistent 0.9 front to rear ratio, with the high pressures aligning with recommendations such as [those from E13](https://support.ethirteen.com/hc/en-us/articles/360043258892-What-tire-pressure-should-I-run-with-your-2-4-2-5in-MTB-Tires).
-
-After three warm up laps, each set of tire pressures was tested over 15 runs, resulting in 30 total laps. The runs were randomised into batches of 5 consecutive runs for a given tire pressure. This controls for the learning effect in which times will naturally get faster as you perfect the same track over and over (more on this later).
-
-To time the runs, a [Freelap timing system](https://www.freelap.com/mtb/) was used, with a claimed accuracy of 0.02s. Conditions on the day were dry, with the soil being tacky after retaining some moisture from rain several days prior.
-
 ### The Results
 
-If we look at the performance of the runs as time progresses, irrespective of what tire pressure was used, we can see that the times get progressively lower with each run. This is expected, given that a learning effect was presumably taking place as I learnt the track.
+#### Average performance
+
+Let's just jump straight to the answer you are probably itching to hear. Across all runs on average, factoring in the acurracy of the timing system of 0.02s, there was no significant difference in performance between the higher (10.81s) and lower (10.78s) tire pressures:
+
+```{r}
+high_pressure_spark_list <- results |>
+  filter(air_pressure_psi == "25/28") |>
+  pull(time_seconds)
+
+low_pressure_spark_list <- results |>
+  filter(air_pressure_psi == "18/20") |>
+  pull(time_seconds)
+
+results |>
+  group_by(air_pressure_psi) |>
+  summarise(average_time = mean(time_seconds)) |>
+  arrange(desc(average_time)) |>
+  add_column(
+    `Distribution of times` = list(high_pressure_spark_list, low_pressure_spark_list)
+  ) |>
+  mutate(
+    air_pressure_psi = if_else(
+      air_pressure_psi == "25/28",
+      "High pressure: 25/58 (front/rear)",
+      "Low pressure: 18/20 (front/rear)",
+    )
+  ) |>
+  rename(`Air Pressure (PSI)` = air_pressure_psi, `Average Time (s)` = average_time) |>
+  gt() |>
+  gt_plt_dist(`Distribution of times`, type = "density") |>
+  data_color(columns = 1, palette = c("#fca636", "#9024a4"), alpha = .5) |>
+  tab_header(title = md("**There was no difference in averages times between high & low pressures**")) |>
+  fmt_number()
+```
+
+But, there is more to the story than looking at averages. If we overlay the density plots for the different pressures from the table, which show how times are spread across all the runs, do you notice something interesting?
+
+```{r}
+results |>
+  ggplot(aes(x = time_seconds, y = air_pressure_psi, fill = air_pressure_psi)) +
+  geom_density_ridges(scale = 4, alpha = .5) +
+  scale_y_discrete(expand = c(0, 0)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  coord_cartesian(clip = "off") +
+  theme_ridges() +
+  scale_fill_viridis_d(option = "C", begin = .3, end = .8, guide = "none") +
+  labs(
+    title = "Lower pressures (purple) were more consistent. \nHigher pressures (yellow) showed greater variance.",
+    y = "Air pressure front/rear (psi)",
+    x = "Time (s)"
+  )
+```
+
+Here, we can see that the highest tire pressures produced not only the fastest results of the testing (left tail of the yellow distribution), but also the slowest results of the testing (right tail of the yellow distribution). The lower pressures on the other hand produced much more consistent results, as seen the tighter band of results around the 10.8 s mark in the purple distribution. We can also visualise this in a table, taking the five fastest and slowest runs:
+
+```{r}
+top_5 <- results |>
+  arrange(time_seconds) |>
+  slice_head(n = 5) |>
+  select(air_pressure_psi, time_seconds) |>
+  mutate(`Fastest or slowest five runs` = "Fastest")
+
+bottom_5 <- results |>
+  arrange(desc(time_seconds)) |>
+  slice_head(n = 5) |>
+  select(air_pressure_psi, time_seconds) |>
+  mutate(`Fastest or slowest five runs` = "Slowest")
+
+bind_rows(top_5, bottom_5) |>
+  rename(`Air pressure front/rear (PSI)` = air_pressure_psi, `Time (s)` = time_seconds) |>
+  gt() |>
+  data_color(columns = 1, palette = c("#9024a4", "#fca636"), alpha = .5) |>
+  tab_header(title = md("**Higher pressures produced the fastest and slowest runs**")) |>
+  fmt_number()
+```
+
+Of the top five fastest and slowest runs, eight out of the ten were on the higher tire pressures.
+
+These results make sense and match my experience during the testing where I found that although the lower tire pressures rolled slower, they had bags more grip to offer. This made placing them precisely where I wanted that much easier, and as a result I was more consistently able to find the line I wanted. The higher tire pressures on the other hand were more likely to slip off line, resulting in mistakes. It was only when I was able to find the sweet spot that they performed slightly better.
+
+#### Controlling for learning
+
+So, lower tires pressures are best, right? Well, it isn't that simple. Let's plot the time of each run over the course of the testing:
 
 ```{r}
 plot <- results |>
-  ggplot(aes(x = run, y = time_seconds)) +
-  geom_point(size = 3, alpha = .8) +
-  geom_smooth() +
+  rename(`Time` = time_seconds, `Pressure (PSI)` = air_pressure_psi) |>
+  ggplot(aes(x = run, y = `Time`)) +
+  geom_point(aes(fill = `Pressure (PSI)`), size = 4, alpha = .8) +
+  geom_smooth(colour = "black", se = FALSE, linetype = "dashed", linewidth = .7) +
   theme_minimal() +
+  scale_fill_viridis_d(option = "C", begin = .3, end = .8, guide = "none") +
   labs(
-    title = "Performance improved as the number of runs increased",
+    title = "Times got faster with each run and the performance levelled off",
     x = "Run number",
     y = "Time (s)"
   )
@@ -98,53 +183,13 @@ plotly_low_config(plot) |>
   )
 ```
 
-The fastest times of the day were 10.45 (s) on run 19 run 23, each with the higher air pressures. But if we look at the average times across all runs for each set of tire pressures, factor in that the timing system has an accuracy of 0.02s, we can see that the results are almost identical:
+We can see that on average the times got better as the testing progressed and then they levelled off and became more consistent towards the end of the session. This is presumably due to the simple fact that I got better and better at the track, the more runs I did.
+
+Let's remove the first 10 runs, assuming during this period I was still in the learning phase of the track, and replot our distributions of times:
 
 ```{r}
 results |>
-  group_by(air_pressure_psi) |>
-  summarise(average_time = mean(time_seconds)) |>
-  arrange(average_time) |>
-  rename(`Air Pressure (PSI)` = air_pressure_psi, `Average Time (s)` = average_time) |>
-  gt() |>
-  fmt_number()
-```
-
-But, averages can be deceiving. If we look at how consistent the times were for each of the sets of tire pressures, we can see the higher pressures showed much more vairance in performance, whereas the lower pressures were much more consistent:
-
-```{r}
-results |>
-  ggplot(aes(x = time_seconds, y = air_pressure_psi, fill = air_pressure_psi)) +
-  geom_density_ridges(scale = 4, alpha = .5) +
-  scale_y_discrete(expand = c(0, 0)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  coord_cartesian(clip = "off") +
-  theme_ridges() +
-  scale_fill_viridis_d(option = "C", begin = .3, end = .8, guide = "none") +
-  labs(
-    title = "Lower pressures (purple) were more consistent. \nHigher pressures (yellow) showed greater variance.",
-    y = "Air pressure front/rear (psi)",
-    x = "Time (s)"
-  )
-```
-
-As I was conducting the testing, I realised that as I switch to a new batch of five runs on a different set of tire pressures, it took me a couple of runs to adjust to the new settings. If we control for this by removing the results for the first two runs of each new batch, we can see that the results shift slightly in favour of the lower tire pressures:
-
-```{r}
-results |>
-  filter(lap != 1 & lap != 2) |>
-  group_by(air_pressure_psi) |>
-  summarise(average_time = mean(time_seconds)) |>
-  arrange(average_time)
-```
-
-Still small differences, but perhaps this time a meaningful difference if racing against the clock.
-
-Examing the variance in the times with this adjust period controlled for, we see the same results as previously that higher tire pressures had more variance, with lower tire pressures being more consistent:
-
-```{r}
-results |>
-  filter(lap != 1 & lap != 2) |>
+  filter(between(run, 10, 30)) |>
   ggplot(aes(x = time_seconds, y = air_pressure_psi, fill = air_pressure_psi)) +
   geom_density_ridges(scale = 4, alpha = .5) +
   scale_y_discrete(expand = c(0, 0)) +
@@ -159,10 +204,12 @@ results |>
   )
 ```
 
-### Conculstion
+The story changes! Like before, the lower tire pressure still prove to be more consistent as shown by the tight band of the purple distrubtion. But unlike before, less slow laps were experienced on the higher pressures, with a higher number of fast laps.
 
-If you want consistent performance on tacky corners where your tires are breaking traction, lower tire pressures seem to be a smarter choice. But of course this speaks nothing to the downsides of slowing rolling resistance on climbs, how the same pressures might perform on other sections of track, and numerous other things.
+### What did I learn?
 
-My personal take away is perhaps I can afford to drop a little pressure from my tires. I've been riding 25/28 PSI with DH tires for a while now, and perhaps I can get more consistency and a little more dampening through dropping a few PSI.
+My take away from this testing is that slower tire pressures offer the advantage of consistency. For the casual racer or weekend warrior, I think this should be an important consideration. Because unless you are Loic Bruni and can hit the perfect line, first time, every time, you often don't have the luxury to hit the same section of track 30 times to find the perfect line. If you are, great! Rock the higher tire pressures, as there seems to be an advantage in speed.
 
-What about you?
+But, let's be honest. The results of this test are limited to the specific tires on the specific track to the specific conditions. Would the results repeat on a wet day down Val di Sole? Probably not. So, take the inisights with a pinch of salt, and use them to think about how you might better tune your bike for your next ride.
+
+The code and data are open source and can be accessed [here](https://github.com/MikeJohnPage/tire-pressures).
