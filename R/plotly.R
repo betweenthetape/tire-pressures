@@ -1,5 +1,4 @@
 #' @noRd
-#' @keywords internal
 plotly_low_config <- function(plot) {
   ggplotly(plot) |>
     config(
