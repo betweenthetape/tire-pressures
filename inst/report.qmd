@@ -1,5 +1,5 @@
 ---
-title: "Analysis: Are Lower Tire Pressures Faster?"
+title: "Are Lower Tire Pressures Faster?"
 author: "Mike Page"
 date: "11/15/2024"
 format: html
@@ -27,19 +27,11 @@ We all know the theory: lower tire pressures mean more grip, higher pressures ro
 
 Two sets of tire pressures were chosen for my 88kg weight: 25/28 PSI (front/rear) for the higher pressures and 18/20 PSI (front/rear) for the lower pressures. These pressures maintain a consistent 0.9 front to rear ratio, with the high pressures aligning with recommendations such as [those from E13](https://support.ethirteen.com/hc/en-us/articles/360043258892-What-tire-pressure-should-I-run-with-your-2-4-2-5in-MTB-Tires).
 
-After three warm up laps, each set of tire pressures was tested over 15 runs, resulting in 30 total laps. The runs were performed in batches of five consecutive runs with high or low pressures selected at random. To time the runs, an automatic [Freelap timing system](https://www.freelap.com/mtb/) was used, with an accuracy of 0.02s.
-
-#### The test rig
-
-The test bike of choice was a Raaw Madonna v2.2. At 188cm in height, I chose a size large. The geometry of this bike feels great, with the high stack and well proportion chainstays creating intuitive handling that makes placing weight between the front and rear tires feel effortless.
-
-Michelin Wild Enduro Racing Line tires were chosen for this test. It is a tire I have a lot of experience on and believe it is well suited for the terrain that is frequently found here in the south of Switzerland. Inside the tires was a set of Cushcore pro inserts.
+After three warm up laps, each set of tire pressures was then tested over 15 runs, resulting in 30 total laps. The runs were performed in batches of five runs with high or low pressures selected at random and maintained for the current batch. To time the runs, an automatic [Freelap timing system](https://www.freelap.com/mtb/) was used, with an accuracy of 0.02s.
 
 #### The track
 
-The upper section of Mondini Downhill, a blue flow trail in the south of Switzerland, was used for testing. It has a steep roll in followed by three flat to medium banked corners with just the right gradient that your tires begin to break traction if you don't pedal or touch the breaks.
-
-Testing only three corners meant that I could reduce the effect that other factors such as mistakes and fitness may have had on the results. This means we that the more I was able to repeat the same run, the more I could be sure that the results are due to the tire pressures, and not just due to a bad run.
+The upper section of Mondini Downhill, a blue flow trail in the south of Switzerland, was used for testing. It has a steep roll in followed by three flat to medium banked corners with just the right gradient that your tires begin to break traction if you don't pedal or touch the breaks. Testing only three corners meant that I could reduce the effect that other factors such as mistakes and fitness may have had on the results.
 
 ```{=html}
 <div class="TrailforksWidgetTrail" data-w="100%" data-h="350px" data-trailid="97411" data-activitytype="1" data-map="1" data-basemap="trailforks" data-elevation="1" data-photos="0" data-title="1" data-info="1" data-trail_opacity="25" data-v="2" data-basicmap="1"></div>
@@ -49,6 +41,12 @@ Testing only three corners meant that I could reduce the effect that other facto
 var script = document.createElement("script"); script.setAttribute("src", "https://es.pinkbike.org/ttl-86400/sprt/j/trailforks/widget.js"); document.getElementsByTagName("head")[0].appendChild(script); var widgetCheck = false;
 </script>
 ```
+
+#### The test rig
+
+The test bike of choice was a Raaw Madonna v2.2. At 188cm in height, I chose a size large. The geometry of this bike feels great, with the high stack and well proportion chainstays creating intuitive handling that makes placing weight between the front and rear tires feel effortless.
+
+Michelin Wild Enduro Racing Line tires were chosen for this test. It is a tire I have a lot of experience on and believe it is well suited for the terrain that is frequently found here in the south of Switzerland. Inside the tires was a set of Cushcore pro inserts.
 
 ### The Results
 
@@ -105,7 +103,7 @@ results |>
   )
 ```
 
-Here, we can see that the highest tire pressures produced not only the fastest results of the testing (the left tail of the yellow distribution), but also the slowest results of the testing (the right tail of the yellow distribution). The lower pressures on the other hand produced more consistent results, as seen by the tighter band of results around the 10.8 s mark in the purple distribution. Another way to visualise this is to take the five fastest and slowest runs across all tire pressures, and count how many appear in each group. Here we see that eight out of the 10 fastest/slowest runs were on the higher tire pressures:
+Here, we can see that the highest tire pressures produced not only the fastest results of the testing (the left tail of the yellow distribution), but also the slowest results of the testing (the right tail of the yellow distribution). The lower pressures on the other hand produced more consistent results, as seen by the tighter band of results around the 10.8 s mark in the purple distribution. Another way to visualise this is to take the five fastest and slowest runs across all tire pressures, and count how many appear in each group. Here we see that eight out of the ten fastest/slowest runs were on the higher tire pressures:
 
 ```{r}
 top_5 <- results |>
@@ -132,7 +130,7 @@ These results match my experience during the testing where I found that although
 
 #### Learning period
 
-Looking at averages and consistency across the whole testing period is important to do as we typically only get to ride a line once, or maybe a handful of times, during a ride or race. So understanding how the tires perform from the first effort to the last is important. But, for most of us (myself included), there is a learning period as we ride a track on repeat. To see this learning period during this test, let's plot the time of each run over the course of testing:
+Looking at averages and consistency across the whole testing period is important to do as we typically only get to ride a line once, or maybe a handful of times, during a ride or race. So understanding how the tires perform from the first to the last effort is important. But, for most of us (myself included), there is a learning period as we ride a track on repeat. To see this learning period during this test, let's plot the time of each run over the course of testing:
 
 ```{r}
 plot <- results |>
@@ -196,8 +194,8 @@ The story changes! Like before, the lower tire pressure still prove to be more c
 
 ### Takeaways?
 
-My take away from this testing is that slower tire pressures offer the advantage of consistency. For the casual racer or weekend warrior, I think this should be an important consideration. Because unless you are Loic Bruni and can hit the perfect line, first time, every time, you often don't have the luxury to hit the same section of track 30 times to find the perfect line. If you are, great! Rock the higher tire pressures, as there seems to be an advantage in speed.
+My take away from this testing is that slower tire pressures offer the advantage of consistency. For the casual racer or weekend warrior, I think this should be an important consideration. Because unless you are Loic Bruni and can hit the perfect line, first time, every time, you often don't have the luxury to hit the same section of track 30 times to find the perfect line. If you do, then great! Rock the higher tire pressures, as there seems to be an advantage in speed.
 
-But, take these insights with a pinch of salt. They are specific to the combination of tires, rider, track and conditions. Would the results repeat on a wet day down Val di Sole? Possibly. Possibly not. For that, we need more testing. For now, think about how you might better tune your bike for your next ride.
+But, take these insights with a pinch of salt. They are specific to the combination of tires, rider, track and conditions. Would the results repeat on a wet day down Val di Sole? Possibly. Possibly not. For that, we need more testing. For now, think about how you might use these results to better tune your bike for your next ride.
 
 The code and data are open source and can be accessed [here](https://github.com/MikeJohnPage/tire-pressures).
